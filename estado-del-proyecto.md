@@ -59,3 +59,14 @@ La siguiente entrega recomendada es la validación de testing en un entorno de e
 Se resolvió la divergencia de recuperación de contraseña de Android conservando la implementación ya integrada y el historial de ambas ramas. No se hizo squash ni force push. El frontend incluye su rama de recuperación de contraseña. Las comprobaciones CI de los tres repositorios de código se ejecutan ahora en testing.
 
 El nombre testing no crea por sí mismo un servidor ni una base de pruebas. No se cambió la rama predeterminada de GitHub, no se desplegó y no se modificaron bases remotas.
+
+## Evidencia de esta consolidación
+
+- Android: `assembleDebug`, `testDebugUnitTest` y `lintDebug` correctos localmente; 38 pruebas sin fallos. CI de testing: https://github.com/Krayxzlim/DNDcompanion/actions/runs/40338721916
+- API: ocho archivos de pruebas de reglas correctos localmente; suite completa de integración y validación Prisma aprobadas en CI: https://github.com/Krayxzlim/dnd-campaign-hub-backend/actions/runs/40338723464
+- Web: build, lint y cuatro pruebas de recuperación correctos localmente y en CI: https://github.com/Krayxzlim/dnd-campaign-hub-frontend/actions/runs/40338731059
+- No se ejecutaron recorridos con dispositivo físico, correo real ni servicios de producción. Las pruebas de integración usan una base de ensayo dentro de CI.
+
+## Estado de las ramas anteriores
+
+El frontend queda con `main` y `testing`; su rama de recuperación y la referencia local work se retiraron después de verificar respaldo e inclusión. En Android y backend se conservan las ramas anteriores además de testing y las etiquetas: la revisión automática bloqueó el borrado masivo del backend por requerir autorización explícita de eliminación. No se intentó el mismo borrado masivo en Android. Esto no deja código fuera de testing; solo quedan referencias históricas adicionales hasta confirmar su eliminación.

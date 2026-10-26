@@ -62,7 +62,7 @@ El nombre testing no crea por sí mismo un servidor ni una base de pruebas. No s
 
 ## Evidencia de esta consolidación
 
-- Android: `assembleDebug`, `testDebugUnitTest` y `lintDebug` correctos localmente; 38 pruebas sin fallos. CI de testing: https://github.com/Krayxzlim/DNDcompanion/actions/runs/40338721916
+- Android: `assembleDebug`, `testDebugUnitTest` y `lintDebug` correctos localmente; 38 pruebas sin fallos. CI de testing también aprobado: https://github.com/Krayxzlim/DNDcompanion/actions/runs/40338721916
 - API: ocho archivos de pruebas de reglas correctos localmente; suite completa de integración y validación Prisma aprobadas en CI: https://github.com/Krayxzlim/dnd-campaign-hub-backend/actions/runs/40338723464
 - Web: build, lint y cuatro pruebas de recuperación correctos localmente y en CI: https://github.com/Krayxzlim/dnd-campaign-hub-frontend/actions/runs/40338731059
 - No se ejecutaron recorridos con dispositivo físico, correo real ni servicios de producción. Las pruebas de integración usan una base de ensayo dentro de CI.

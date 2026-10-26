@@ -69,4 +69,6 @@ El nombre testing no crea por sí mismo un servidor ni una base de pruebas. No s
 
 ## Estado de las ramas anteriores
 
-El frontend queda con `main` y `testing`; su rama de recuperación y la referencia local work se retiraron después de verificar respaldo e inclusión. En Android y backend se conservan las ramas anteriores además de testing y las etiquetas: la revisión automática bloqueó el borrado masivo del backend por requerir autorización explícita de eliminación. No se intentó el mismo borrado masivo en Android. Esto no deja código fuera de testing; solo quedan referencias históricas adicionales hasta confirmar su eliminación.
+Con autorización explícita del usuario, se retiraron las 18 ramas históricas restantes (10 de Android y 8 del backend), además de la rama de recuperación del frontend retirada en la consolidación. Se verificó antes de cada eliminación que la punta no hubiera cambiado, que todos sus commits fueran ancestros de testing y que su etiqueta de respaldo estuviera publicada.
+
+Estado final: Android conserva `master` y `testing`; backend, frontend y Fragua conservan `main` y `testing`. Las referencias locales históricas también se retiraron. Las ramas originales permanecen en sus commits previos y las etiquetas `archive/2026-10-26/...` permiten recuperar cualquier punta archivada. El trabajo nuevo continúa en testing.

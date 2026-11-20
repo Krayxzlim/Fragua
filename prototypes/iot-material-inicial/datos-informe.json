@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "fields": {
+    "integrantes": "Luciano Aufieri",
+    "fecha": "2026-11-11",
+    "costo_0": "29990",
+    "costo_1": "3900",
+    "costo_2": "3800",
+    "costo_3": "4500",
+    "presupuesto_fuentes": "Importes pagados informados por Luciano Aufieri el 11/11/2026, en ARS: kit ESP32-CAM con OV3660 3 MP y base programadora USB-C $29.990; HC-SR501 $3.900; lote 40 cables hembra-hembra de 20 cm $3.800; lote 40 cables macho-macho de 20 cm $4.500. Subtotal comprado $42.190. Comprobantes y fecha de compra no aportados. Cable/fuente, soporte/bandeja y dado: disponibilidad y costo adicional por verificar. No duplicar costo de base ni cámara, incluidas en el kit."
+  },
+  "photos": []
+}

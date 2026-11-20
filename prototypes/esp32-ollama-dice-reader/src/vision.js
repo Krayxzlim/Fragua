@@ -4,7 +4,7 @@ const WIDTH = 64;
 const HEIGHT = 48;
 
 async function thumbnail(image) {
-  return sharp(image, { failOn: "error" })
+  return sharp(image, { failOn: "error", limitInputPixels:16000000 })
     .resize(WIDTH, HEIGHT, { fit: "fill" })
     .grayscale()
     .raw()

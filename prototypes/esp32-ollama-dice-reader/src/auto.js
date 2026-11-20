@@ -29,7 +29,7 @@ class AutoReader {
   start(){
     if(!this.calibrated)throw new Error("Primero calibrá con la zona vacía");
     if(this.running)return;
-    this.running=true;this.phase="esperando_dado";this.previous=this.baseline;
+    this.running=true;this.phase="esperando_retiro";this.previous=this.baseline;
     this.occupiedFrames=0;this.emptyFrames=0;this.lastError=null;
     this.schedule(0);
   }
@@ -53,7 +53,7 @@ class AutoReader {
       this.previous=frame;
       this.lastOccupancy=Number(occupancy.toFixed(4));
       this.lastMotion=Number(motion.toFixed(4));
-      this.lastError=null;
+      if(this.phase!=="esperando_retiro")this.lastError=null;
       if(this.phase==="esperando_dado"){
         this.occupiedFrames=occupancy>=this.occupancyThreshold?this.occupiedFrames+1:0;
         if(this.occupiedFrames>=2){this.phase="estabilizando";this.stableSince=Date.now();}
@@ -62,7 +62,7 @@ class AutoReader {
         else if(motion>=this.motionThreshold)this.stableSince=Date.now();
         else if(Date.now()-this.stableSince>=this.stableMs){
           this.phase="analizando";
-          try { const result=await this.analyze(image);this.onReading(image,result); }
+          try { const result=await this.analyze(image);if(this.running)this.onReading(image,result); }
           catch(error){this.lastError=error.message;this.log.error("Lectura automática:",error.message);}
           if(this.running){this.phase="esperando_retiro";this.emptyFrames=0;}
         }
@@ -73,6 +73,7 @@ class AutoReader {
         }
       }
     } catch(error){
+      this.stableSince=Date.now();this.occupiedFrames=0;this.emptyFrames=0;
       this.lastError=error.message;
       this.log.error("Monitoreo automático:",error.message);
     } finally {

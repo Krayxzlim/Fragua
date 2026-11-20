@@ -1,85 +1,80 @@
-# Lector de dados IoT · ESP32-CAM + Ollama
+# Lector local de d20 para FRAGUA
 
-Prototipo **independiente de Fragua**, implementado en Node.js y Express. La cámara ESP32-CAM entrega fotografías JPEG y el servidor las envía al modelo de visión gemma3:4b instalado en Ollama local. El resultado aparece en una página web sencilla, sin Supabase ni autenticación.
+Prototipo independiente en esta carpeta. Adaptado del prototipo del chat «Optimizar respuesta web cámara», rama prototype/esp32-ollama-dice-reader de Krayxzlim/Fragua. No modifica ni publica el backend de FRAGUA.
 
-## Requisitos
+## Usarlo ahora, sin cámara
 
-- Node.js 20 o superior.
-- ESP32-CAM conectada a la misma red que la computadora, con GET /capture disponible (ejemplo: http://192.168.1.95/capture).
-- Ollama local y gemma3:4b descargado (ollama list).
-- Buena iluminación, un dado visible y fondo uniforme.
+1. Abrir Ollama y mantenerlo funcionando.
+2. Ejecutar INICIAR.cmd (si la aplicación ya está abierta, no iniciar otra copia).
+3. Abrir http://127.0.0.1:3000.
+4. Elegir una imagen JPEG o PNG y pulsar «Analizar archivo».
 
-## Ejecutar en Windows (PowerShell)
+El archivo se procesa localmente. La API conserva únicamente la última imagen y resultado en memoria hasta reemplazarlos o cerrar el proceso. No graba video ni registra tiradas en FRAGUA. Una respuesta reconocida es un candidato que requiere revisión humana; la confianza declarada por el modelo no es una probabilidad calibrada.
 
-1. Clonar la rama: git clone -b prototype/esp32-ollama-dice-reader https://github.com/Krayxzlim/Fragua.git
-2. Entrar al proyecto: cd Fragua\prototypes\esp32-ollama-dice-reader
-3. Copiar configuración: Copy-Item .env.example .env
-4. Instalar dependencias: npm install
-5. Iniciar: npm start
-6. Abrir http://localhost:3000
+## Modelo configurado
 
-Verificar primero la cámara:
+Ollama ejecuta fragua-d20, un perfil de gemma3:4b con visión, instrucciones para la cara superior del d20 y salida JSON. Temperatura 0, contexto 4096 y máximo 256 tokens de respuesta. El filtro admite valores enteros 1–20 solo para d20, con cara superior visible y confianza media o alta; los demás resultados devuelven valor null.
 
-    curl.exe -f --max-time 15 http://192.168.1.95/capture -o dado.jpg
+Esto configura un modelo previamente entrenado: NO entrena sus pesos con tus dados. Aún no hay un conjunto de fotos etiquetadas del montaje ni una medición de precisión. Un modelo de visión puede confundir una cara lateral, 6/9 u otros números incluso cuando indica confianza alta.
 
-Verificar Ollama:
+Para reproducir la instalación en una PC con Node.js 20 o posterior y Ollama:
 
-    curl.exe http://localhost:11434/api/tags
+```powershell
+npm ci
+ollama pull gemma3:4b
+node setup-model.js
+Copy-Item .env.example .env
+npm start
+```
 
-Si /capture no devuelve un JPEG, consultar qué ruta ofrece el firmware y modificar CAMERA_URL en .env. Ollama debe mostrar gemma3:4b con capacidad vision.
+La instalación actual ya tiene dependencias, modelo y .env. No hace falta repetir estos pasos. Si ollama no se reconoce como comando en esta PC, su ejecutable está en %LOCALAPPDATA%\Programs\Ollama\ollama.exe.
 
-## Uso manual
+## API
 
-1. Elegir **Ver foto** para comprobar el encuadre.
-2. Colocar un único dado quieto y pulsar **Analizar dado**.
-3. Esperar la respuesta del modelo. La primera consulta puede ser más lenta porque carga el modelo en memoria.
-4. La pantalla muestra la fotografía, tipo de dado, número u opción indeterminada, observación y confianza cualitativa.
+- GET /api/health: disponibilidad de la API y nombre de modelo; no prueba la conexión con Ollama.
+- GET /api/state: última lectura, revisión y estado automático.
+- POST /api/read-image: cuerpo binario image/jpeg o image/png, hasta 4 MiB y 16 millones de píxeles. Decodifica y reduce a un máximo de 1024 por lado antes del análisis.
+- GET /api/last-image: última imagen en memoria.
+- GET /api/capture: fotografía de la ESP32-CAM.
+- POST /api/read: captura y analiza una foto de la cámara.
+- POST /api/auto/calibrate: toma referencia de bandeja vacía.
+- POST /api/auto/start y /api/auto/stop: control automático.
 
-## Endpoints
+Ejemplo desde PowerShell con una foto propia:
 
-| Método | Ruta | Descripción |
-| --- | --- | --- |
-| GET | /api/health | Verifica que Express está activo |
-| GET | /api/capture | Solicita una foto JPEG a la cámara |
-| POST | /api/read | Captura y consulta Ollama; devuelve JSON |
-| GET | /api/state | Última lectura y estado del detector |
-| GET | /api/last-image | Última fotografía recibida |
-| POST | /api/auto/calibrate | Referencia visual de mesa vacía |
-| POST | /api/auto/start | Inicia monitoreo experimental |
-| POST | /api/auto/stop | Detiene monitoreo |
+```powershell
+Invoke-RestMethod -Uri http://127.0.0.1:3000/api/read-image -Method Post -ContentType image/jpeg -InFile C:\ruta\d20.jpg
+```
 
-Respuesta ilustrativa de POST /api/read:
+Respuesta: estado, dado, valor (entero o null), cara_superior_visible, confianza, observacion, confirmed:false, timestamp, revision e imageUrl. El campo estado reconocido no equivale a una tirada confirmada. Una futura integración debe revisar/confirmar el candidato y prevenir duplicados antes de registrar la tirada.
 
-    {
-      "estado": "reconocido",
-      "dado": "d20",
-      "valor": 17,
-      "cara_superior_visible": true,
-      "confianza": "alta",
-      "observacion": "Número visible en la cara superior",
-      "timestamp": "2026-11-19T12:00:00.000Z",
-      "revision": 2,
-      "imageUrl": "/api/last-image?v=2"
-    }
+Errores: 409 operación ocupada, 413 cuerpo excesivo, 415 tipo no permitido, 422 imagen inválida, 502 fallo de cámara o modelo. La API escucha en 127.0.0.1 y rechaza orígenes externos; no está preparada para publicarse en Internet.
 
-Cuando la cara superior no es clara o el resultado no es válido, valor es null. La confianza declarada por un modelo generativo no constituye una probabilidad calibrada y la interpretación de dados reales puede fallar.
+## Cuando conectemos la ESP32-CAM
 
-## Modo automático experimental
+1. Verificar su IP y actualizar CAMERA_URL en .env si cambió. Actualmente figura http://192.168.1.95/capture.
+2. Reiniciar la API si se cambió .env.
+3. Fijar la cámara sobre una bandeja, con buena iluminación y cara superior legible.
+4. Probar captura manual y comparar la foto con el dado real.
+5. Calibrar con la bandeja vacía e iniciar automático manteniéndola vacía al comienzo.
+6. Tirar un d20 y esperar a que se estabilice. Retirarlo antes de una nueva tirada.
 
-El procesamiento de movimiento se realiza en Node.js. Se compara una miniatura de las capturas con una referencia de mesa vacía y con el fotograma anterior. El servidor espera estabilidad antes de llamar **una vez** a Ollama. Después espera retirar el objeto para evitar duplicados.
+El modo automático compara fotografías pequeñas para detectar cambios y estabilidad; no es un detector de dados entrenado. Objetos o cambios de luz pueden activarlo. Solo la imagen estable se envía al modelo. Los umbrales y tiempos son valores iniciales pendientes de calibrar. No se consulta continuamente al LLM ni se almacena una filmación.
 
-1. Retirar el dado y cualquier objeto de la zona.
-2. Pulsar **Calibrar mesa vacía**.
-3. Pulsar **Iniciar**.
-4. Lanzar un dado y esperar que se detenga.
-5. Retirar el dado para rearmar el sistema.
+## Evidencia y pendientes
 
-**Limitación:** el detector observa cambios visuales, no comprueba que el objeto sea un dado. Manos, sombras y alteraciones de iluminación pueden activar lecturas. Ajustar AUTO_OCCUPANCY_THRESHOLD, AUTO_EMPTY_THRESHOLD, AUTO_MOTION_THRESHOLD, AUTO_STABLE_MS y AUTO_INTERVAL_MS en .env según el entorno.
+Verificado el 20/11/2026:
 
-## Pruebas
+- 10 pruebas automatizadas aprobadas: validación de respuesta, imagen, concurrencia, errores y contratos de API, entre otras. La mayoría usan sustitutos de cámara/modelo.
+- Prueba real API → Ollama con una imagen gris sintética sin dados: HTTP 200, valor null, aproximadamente 8,7 segundos. Evidencia: smoke-result.json. No mide precisión de d20 ni latencia de cámara.
+- Interfaz local accesible con el perfil fragua-d20.
 
-Ejecutar npm test. La suite usa simulaciones de cámara y Ollama y revisa validación de resultados, respuestas HTTP y conflictos de lectura. Esto **no verifica el hardware real ni la precisión del modelo**.
+Reproducir pruebas: npm test. Repetir la prueba local real: node smoke-local.js (reemplaza la última imagen en memoria y smoke-result.json).
 
-## Seguridad y alcance
+Pendiente: capturas físicas, exactitud por cara, abstenciones, falsos positivos, rendimiento sostenido, calibración de estabilidad y prueba con GTX1070 en la escena real. También quedan pendientes integración con FRAGUA, registro persistente y actuador del parcial.
 
-El servidor escucha en 127.0.0.1 de forma predeterminada. No publicar Ollama ni las rutas de la cámara en Internet. No tiene autenticación, persistencia de resultados, ni integración con Fragua. Se mantiene en una rama y una carpeta aisladas para no alterar la app existente.
+Antes de decidir un ajuste fino, reunir imágenes etiquetadas de las 20 caras, distintas orientaciones, iluminación, ausencia de dado y casos borrosos. Separar sesiones completas entre entrenamiento y evaluación para evitar evaluar con fotos casi idénticas a las de entrenamiento. Medir aciertos, errores y abstenciones en el conjunto reservado. No reportar entrenamiento ni precisión hasta disponer de esa evidencia.
+
+## Material del parcial
+
+El informe HTML y la primera implementación están en ../iot-material-inicial, identificados como históricos. El usuario informó que las imágenes probadas funcionan bien; no hay todavía un registro etiquetado para calcular precisión. Los pesos de Ollama no se incluyen en Git: se reproducen con setup-model.js y la descarga del modelo base.

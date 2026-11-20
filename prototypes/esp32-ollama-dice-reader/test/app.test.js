@@ -37,7 +37,7 @@ test("enlace con Ollama envía imagen en Base64 y esquema JSON",async()=>{
       assert.equal(body.messages[0].images[0],JPEG.toString("base64"));
       assert.equal(body.format.type,"object");
       return Response.json({message:{content:JSON.stringify({
-        dado:"d6",valor:5,cara_superior_visible:true,confianza:"alta",observacion:"Cara superior visible"
+        dado:"d20",valor:5,cara_superior_visible:true,confianza:"alta",observacion:"Cara superior visible"
       })}});
     }
   });
@@ -76,4 +76,34 @@ test("modo automático exige calibración",async()=>{
   await withServer(app,async base=>{
     assert.equal((await fetch(base+"/api/auto/start",{method:"POST"})).status,400);
   });
+});
+
+test('archivo real se decodifica, se analiza y no usa la cámara',async()=>{
+  const sharp=require('sharp');
+  const png=await sharp({create:{width:64,height:64,channels:3,background:'white'}}).png().toBuffer();
+  let calls=0;
+  const {app}=createApp({capture:async()=>{throw Error('No usar cámara');},analyze:async image=>{calls++;assert.equal((await sharp(image).metadata()).format,'jpeg');return {dado:'d20',valor:20,estado:'reconocido'};}});
+  await withServer(app,async base=>{
+    const send=(bytes,type='image/png')=>fetch(base+'/api/read-image',{method:'POST',headers:{'Content-Type':type},body:bytes});
+    assert.equal((await send('bad')).status,422);
+    assert.equal((await send('bad','text/plain')).status,415);
+    assert.equal((await send(Buffer.alloc(4*1024*1024+1))).status,413);
+    const result=await (await send(png)).json();assert.equal(result.valor,20);assert.equal(result.confirmed,false);assert.equal(calls,1);
+    assert.equal((await fetch(base+'/api/read-image',{method:'POST',headers:{Origin:'http://evil.example','Content-Type':'image/png'},body:png})).status,403);
+  });
+});
+test('captura bloquea una segunda operación y limpia el resultado previo',async()=>{
+  let release;let block=false;const wait=new Promise(r=>release=r);
+  const {app}=createApp({capture:async()=>{if(block)await wait;return JPEG;},analyze:async()=>({valor:12})});
+  await withServer(app,async base=>{
+    await fetch(base+'/api/read',{method:'POST'});block=true;
+    const first=fetch(base+'/api/capture');await new Promise(r=>setTimeout(r,30));
+    assert.equal((await fetch(base+'/api/read',{method:'POST'})).status,409);
+    release();await first;
+    assert.equal((await (await fetch(base+'/api/state')).json()).latest,null);
+  });
+});
+test('rechaza inferencia remota y respuestas de otros dados',()=>{
+  assert.throws(()=>createOllama({url:'https://example.com',model:'x'}),/local/);
+  assert.equal(normalizeDice({dado:'d6',valor:6,cara_superior_visible:true,confianza:'alta'}).valor,null);
 });

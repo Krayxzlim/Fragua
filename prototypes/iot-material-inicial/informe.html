@@ -1,0 +1,383 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FRAGUA · Informe IoT físico</title><style>
+:root{--ink:#172e29;--paper:#f6f5ef;--accent:#267365;--line:#c9d3cc}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.65 system-ui,sans-serif}aside{position:fixed;inset:0 auto 0 0;width:260px;background:#18372f;color:#f8f5e9;padding:30px 22px;overflow:auto}aside strong{font-size:28px;letter-spacing:.16em}aside small{display:block;color:#b8cec3;margin-bottom:22px}nav a{display:block;color:#d8e7dd;text-decoration:none;padding:7px 8px;font-size:14px;border-left:2px solid transparent}nav a.active{border-color:#dbb971;color:white;background:#244a3e}main{margin-left:260px;max-width:1400px;padding:34px 6vw 80px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:35px}button,.button{display:inline-block;font:inherit;font-size:13px;background:transparent;border:1px solid #8caaa0;color:var(--ink);padding:9px 12px;cursor:pointer;border-radius:3px}button:hover,.button:hover{background:#e2e9e1}section{padding:30px 0 55px;border-bottom:1px solid var(--line);scroll-margin-top:20px}h1{font-size:clamp(40px,6vw,80px);line-height:1.05;letter-spacing:-.045em;font-weight:650;margin:25px 0}h2{font-size:34px;line-height:1.2;font-weight:600;letter-spacing:-.03em}h3{font-size:21px}p{max-width:850px}.lead{font-size:24px}.eyebrow,.section-number{letter-spacing:.13em;font-size:12px;font-weight:700}.status{background:#dbe9df;border-left:4px solid var(--accent);padding:12px 16px;font-size:13px;letter-spacing:.03em;margin:25px 0}.muted{color:#58695e;font-size:14px}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:24px 0}label{display:block;font-size:14px}input,textarea{display:block;width:100%;font:inherit;color:var(--ink);background:white;border:1px solid var(--line);padding:10px;margin:6px 0;border-radius:2px}textarea{min-height:100px;resize:vertical}input[type=file]{font-size:12px;max-width:300px}.split{display:grid;grid-template-columns:1fr 1fr;gap:35px}.note{border-left:3px solid #b68b41;padding:10px 18px;background:#f0eadb}a{color:#216455}details{border-top:1px solid var(--line);padding:15px 0}summary{cursor:pointer;font-weight:600}svg{width:100%;height:auto;margin:20px 0}pre{background:#192e29;color:#e3eee7;padding:20px;overflow:auto;font-size:12px;line-height:1.6;max-height:600px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:12px;text-align:left;border-bottom:1px solid var(--line)}td input{min-width:110px}.scroll{overflow:auto}.gantt{display:grid;grid-template-columns:230px repeat(12,45px);gap:3px;min-width:820px;font-size:12px;margin:30px 0}.gantt>*{padding:8px 3px;border-bottom:1px solid var(--line)}.gantt b{text-align:center}.gantt .bar{background:#2c7464;color:white;text-align:center}.metric{font-size:20px;font-weight:600}.gallery-item{margin:20px 0;border-bottom:1px solid var(--line);padding-bottom:20px}.gallery-item img{max-width:100%;max-height:400px;object-fit:contain}.present section{display:none}.present section.current{display:block}.present main{padding-top:20px}.present .toolbar{position:sticky;top:0;background:var(--paper);z-index:1}.feedback{font-size:13px;min-height:25px;color:#775a19}footer{font-size:12px;margin-top:30px;color:#5c6e62}@media(max-width:850px){aside{position:static;width:auto;padding:18px}aside small{margin:0}nav{display:flex;overflow:auto;gap:10px}nav a{white-space:nowrap}main{margin:0;padding:20px}.split,.fields{grid-template-columns:1fr}h2{font-size:28px}}@media print{aside,.toolbar,.feedback,#photos,.button{display:none!important}main{margin:0;padding:0;max-width:none}section,.present section{display:block!important;break-before:page;padding:10px 0}section:first-of-type{break-before:auto}pre{max-height:none;white-space:pre-wrap;font-size:9px}details{break-inside:auto}textarea{height:auto;min-height:100px}body{font-size:11pt}h1{font-size:50px}h2{font-size:25px}.gantt{grid-template-columns:180px repeat(12,35px);min-width:600px}svg{max-height:350px}input,textarea{background:transparent}a{color:inherit}}
+</style></head><body><aside><strong>FRAGUA</strong><small>LABORATORIO IoT / 01</small><nav><a href="#s0" data-nav="0">01 · Portada</a><a href="#s1" data-nav="1">02 · Introducción</a><a href="#s2" data-nav="2">03 · Objetivos</a><a href="#s3" data-nav="3">04 · Diagrama de Gantt</a><a href="#s4" data-nav="4">05 · Diagrama de bloques</a><a href="#s5" data-nav="5">06 · Wire diagram</a><a href="#s6" data-nav="6">07 · Presupuesto</a><a href="#s7" data-nav="7">08 · Hardware y software</a><a href="#s8" data-nav="8">09 · Código comentado</a><a href="#s9" data-nav="9">10 · Ensayos y pruebas</a><a href="#s10" data-nav="10">11 · Análisis de resultados</a><a href="#s11" data-nav="11">12 · Conclusiones y mejoras</a></nav></aside><main><div class="toolbar"><button id="mode">Modo presentación</button><button id="prev">← Anterior</button><button id="next">Siguiente →</button><button id="print">Imprimir / PDF</button><button id="export">Exportar datos JSON</button><label class="button">Importar JSON<input id="import" type="file" accept="application/json" hidden></label><button id="download">Descargar informe completo</button></div><div id="feedback" class="feedback" role="status"></div><section id="s0"><div class="section-number">01 / PORTADA</div><div class="eyebrow">INTERNET DE LAS COSAS · EXAMEN 2 · MODALIDAD FÍSICA</div><h1>La tirada.<br>La imagen.<br>El resultado.</h1><p class="lead">FRAGUA / Lectura asistida de dados con ESP32-CAM</p><p>Prototipo de laboratorio: detección del gesto, captura JPEG y propuesta de lectura con revisión humana.</p><div class="status">SOFTWARE PREPARADO · VALIDACIÓN FÍSICA PENDIENTE</div><div class="fields"><label>Integrantes <input data-save="integrantes" type="text" placeholder="Completar nombres (2–3 máximo si es grupal)" aria-label="Completar nombres (2–3 máximo si es grupal)"></label><label>Fecha de elaboración <input data-save="fecha" type="date" placeholder="Fecha de elaboración" aria-label="Fecha de elaboración"></label><label>Curso / docente <input data-save="curso" type="text" placeholder="Completar curso y docente" aria-label="Completar curso y docente"></label></div><p class="muted">Documento de trabajo. Los campos vacíos son pendientes, nunca mediciones de valor cero. No se aportaron fotografías físicas a este paquete.</p></section><section id="s1"><div class="section-number">02 / INTRODUCCIÓN</div><h2>Del dado físico a un evento digital</h2><p>FRAGUA necesita vincular una tirada sobre la mesa con un resultado utilizable por su ecosistema. La carga manual interrumpe el juego y puede introducir errores. Este proyecto explora una interfaz IoT que obtiene evidencia visual y propone una lectura verificable.</p><p>La ESP32-CAM conecta sensores y un actuador con una API a través de Wi-Fi. El HC-SR501 detecta cambios infrarrojos asociados al gesto de la mano; no detecta de forma fiable un pequeño dado ni determina su reposo. El sistema espera, toma tres fotos y analiza la estabilidad visual.</p><div class="split"><div><h3>Primera etapa</h3><p>Montaje físico seguro, disparo PIR, señal luminosa y recepción de JPEG claros.</p></div><div><h3>Segunda etapa</h3><p>Reconocimiento experimental de un d6 y contrato de integración futura con FRAGUA.</p></div></div><p class="note">Alcance implementado: un d6 blanco de puntos negros. Dados poliédricos numerados y múltiples dados requieren otro reconocedor y validación propia.</p></section><section id="s2"><div class="section-number">03 / OBJETIVOS</div><h2>Objetivos verificables</h2><h3>General</h3><p>Construir y validar un prototipo físico IoT que convierta el gesto de una tirada en evidencia fotográfica y una propuesta de resultado revisable para FRAGUA.</p><ol><li>Conectar PIR y cámara con alimentación común, sin aplicar 5 V a GPIO.</li><li>Activar un LED durante 80 ms como respuesta observable al disparo.</li><li>Capturar tres JPEG por evento, con espera inicial configurable.</li><li>Transmitir y conservar imágenes identificadas por dispositivo, tirada y fotograma.</li><li>Proponer la lectura de un d6 o abstenerse ante ambigüedad.</li><li>Medir capturas útiles, cobertura, exactitud y latencia en un conjunto físico etiquetado.</li><li>Exponer un evento confirmado e idempotente para una futura integración.</li></ol><p class="note">Metas propuestas, no resultados: al menos 27/30 tiradas con una foto útil; reportar por separado todos los errores y rechazos. No se fija una exactitud prometida antes de medir.</p></section><section id="s3"><div class="section-number">04 / DIAGRAMA DE GANTT</div><h2>Plan de trabajo / 12 días</h2><p>Estimación relativa a la fecha de inicio. La secuencia es propuesta, no historial de actividades terminadas.</p><label>Inicio planificado <input data-save="inicio" type="date" placeholder="Inicio planificado" aria-label="Inicio planificado"></label><div class="scroll"><div class="gantt"><div>Actividad / días →</div><b>1</b><b>2</b><b>3</b><b>4</b><b>5</b><b>6</b><b>7</b><b>8</b><b>9</b><b>10</b><b>11</b><b>12</b><span>Identificación y montaje</span><span class="bar" title="Identificación y montaje: días 1–2">2 d</span><span class="bar" title="Identificación y montaje: días 1–2"></span><span class="" title="Identificación y montaje: días 1–2"></span><span class="" title="Identificación y montaje: días 1–2"></span><span class="" title="Identificación y montaje: días 1–2"></span><span class="" title="Identificación y montaje: días 1–2"></span><span class="" title="Identificación y montaje: días 1–2"></span><span class="" title="Identificación y montaje: días 1–2"></span><span class="" title="Identificación y montaje: días 1–2"></span><span class="" title="Identificación y montaje: días 1–2"></span><span class="" title="Identificación y montaje: días 1–2"></span><span class="" title="Identificación y montaje: días 1–2"></span><span>Cámara y actuador</span><span class="" title="Cámara y actuador: días 2–3"></span><span class="bar" title="Cámara y actuador: días 2–3">2 d</span><span class="bar" title="Cámara y actuador: días 2–3"></span><span class="" title="Cámara y actuador: días 2–3"></span><span class="" title="Cámara y actuador: días 2–3"></span><span class="" title="Cámara y actuador: días 2–3"></span><span class="" title="Cámara y actuador: días 2–3"></span><span class="" title="Cámara y actuador: días 2–3"></span><span class="" title="Cámara y actuador: días 2–3"></span><span class="" title="Cámara y actuador: días 2–3"></span><span class="" title="Cámara y actuador: días 2–3"></span><span class="" title="Cámara y actuador: días 2–3"></span><span>PIR y temporización</span><span class="" title="PIR y temporización: días 3–4"></span><span class="" title="PIR y temporización: días 3–4"></span><span class="bar" title="PIR y temporización: días 3–4">2 d</span><span class="bar" title="PIR y temporización: días 3–4"></span><span class="" title="PIR y temporización: días 3–4"></span><span class="" title="PIR y temporización: días 3–4"></span><span class="" title="PIR y temporización: días 3–4"></span><span class="" title="PIR y temporización: días 3–4"></span><span class="" title="PIR y temporización: días 3–4"></span><span class="" title="PIR y temporización: días 3–4"></span><span class="" title="PIR y temporización: días 3–4"></span><span class="" title="PIR y temporización: días 3–4"></span><span>API y reconocimiento</span><span class="" title="API y reconocimiento: días 4–6"></span><span class="" title="API y reconocimiento: días 4–6"></span><span class="" title="API y reconocimiento: días 4–6"></span><span class="bar" title="API y reconocimiento: días 4–6">3 d</span><span class="bar" title="API y reconocimiento: días 4–6"></span><span class="bar" title="API y reconocimiento: días 4–6"></span><span class="" title="API y reconocimiento: días 4–6"></span><span class="" title="API y reconocimiento: días 4–6"></span><span class="" title="API y reconocimiento: días 4–6"></span><span class="" title="API y reconocimiento: días 4–6"></span><span class="" title="API y reconocimiento: días 4–6"></span><span class="" title="API y reconocimiento: días 4–6"></span><span>Calibración física</span><span class="" title="Calibración física: días 7–8"></span><span class="" title="Calibración física: días 7–8"></span><span class="" title="Calibración física: días 7–8"></span><span class="" title="Calibración física: días 7–8"></span><span class="" title="Calibración física: días 7–8"></span><span class="" title="Calibración física: días 7–8"></span><span class="bar" title="Calibración física: días 7–8">2 d</span><span class="bar" title="Calibración física: días 7–8"></span><span class="" title="Calibración física: días 7–8"></span><span class="" title="Calibración física: días 7–8"></span><span class="" title="Calibración física: días 7–8"></span><span class="" title="Calibración física: días 7–8"></span><span>Evaluación y evidencias</span><span class="" title="Evaluación y evidencias: días 9–10"></span><span class="" title="Evaluación y evidencias: días 9–10"></span><span class="" title="Evaluación y evidencias: días 9–10"></span><span class="" title="Evaluación y evidencias: días 9–10"></span><span class="" title="Evaluación y evidencias: días 9–10"></span><span class="" title="Evaluación y evidencias: días 9–10"></span><span class="" title="Evaluación y evidencias: días 9–10"></span><span class="" title="Evaluación y evidencias: días 9–10"></span><span class="bar" title="Evaluación y evidencias: días 9–10">2 d</span><span class="bar" title="Evaluación y evidencias: días 9–10"></span><span class="" title="Evaluación y evidencias: días 9–10"></span><span class="" title="Evaluación y evidencias: días 9–10"></span><span>Informe y defensa</span><span class="" title="Informe y defensa: días 11–12"></span><span class="" title="Informe y defensa: días 11–12"></span><span class="" title="Informe y defensa: días 11–12"></span><span class="" title="Informe y defensa: días 11–12"></span><span class="" title="Informe y defensa: días 11–12"></span><span class="" title="Informe y defensa: días 11–12"></span><span class="" title="Informe y defensa: días 11–12"></span><span class="" title="Informe y defensa: días 11–12"></span><span class="" title="Informe y defensa: días 11–12"></span><span class="" title="Informe y defensa: días 11–12"></span><span class="bar" title="Informe y defensa: días 11–12">2 d</span><span class="bar" title="Informe y defensa: días 11–12"></span></div></div><p>Dependencias: cableado → cámara/PIR → captura/API → calibración → pruebas independientes → informe. La API puede avanzar en paralelo al montaje.</p><textarea data-save="gantt_real" placeholder="Registrar fechas reales, responsable, duración y desvíos por actividad. Pendiente de completar." aria-label="Registrar fechas reales, responsable, duración y desvíos por actividad. Pendiente de completar."></textarea></section><section id="s4"><div class="section-number">05 / DIAGRAMA DE BLOQUES</div><h2>Arquitectura y flujo de información</h2><svg viewBox="0 0 1000 390" role="img" aria-label="Mano a PIR, PIR y cámara a ESP32, ESP32 a LED y API, API a revisión y futuro FRAGUA"><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#22776b"/></marker></defs><g fill="#eef3ef" stroke="#22776b" stroke-width="2"><rect x="20" y="45" width="190" height="65"/><rect x="20" y="180" width="190" height="65"/><rect x="320" y="90" width="220" height="100"/><rect x="330" y="280" width="200" height="65"/><rect x="650" y="90" width="300" height="100"/><rect x="650" y="280" width="300" height="65"/></g><g fill="#152c29" font-size="21" text-anchor="middle"><text x="115" y="75">PIR HC-SR501</text><text x="115" y="99" font-size="15">gesto de la mano</text><text x="115" y="210">Cámara OV3660</text><text x="115" y="233" font-size="15">luz → imagen</text><text x="430" y="130">ESP32-CAM</text><text x="430" y="160" font-size="17">espera + JPEG × 3</text><text x="430" y="318">LED / actuador</text><text x="800" y="130">API + archivos</text><text x="800" y="160" font-size="17">candidato d6 + revisión</text><text x="800" y="318">FRAGUA · futuro</text></g><g fill="none" stroke="#22776b" stroke-width="3" marker-end="url(#arrow)"><path d="M210 78H270V120H320"/><path d="M210 212H270V165H320"/><path d="M430 190V280"/><path d="M540 140H650"/><path d="M800 190V280" stroke-dasharray="7 5"/></g><g font-size="15" fill="#152c29"><text x="550" y="120">Wi-Fi / HTTP</text><text x="440" y="240">GPIO4</text><text x="810" y="237">evento confirmado</text></g></svg><p>El PC aporta almacenamiento y cómputo. La ESP32 no interpreta el dado. La flecha discontinua representa una integración todavía no conectada.</p><details><summary>Estados y tratamiento de errores</summary><p>Calentamiento 60 s → listo tras LOW → gesto → LED y espera 2,5 s → tres fotos → espera 5 s y LOW. Fallo inicial de cámara: bloqueo hasta reinicio. Sin red: registro y descarte, sin cola offline. Una captura fallida mantiene la tirada incompleta; no se inventa resultado.</p></details></section><section id="s5"><div class="section-number">06 / WIRE DIAGRAM</div><h2>Tres cables. Una masa común.</h2><p class="note">Esquema lógico para AI Thinker, no dibujo de posición física de pines. Verificar etiquetas y acceso con la base conectada; no cablear por orientación de esta figura.</p><svg viewBox="0 0 1000 430" role="img" aria-label="PIR VCC a 5V rojo, GND a GND negro, OUT a GPIO13 amarillo; LED integrado GPIO4 y USB-C a base"><rect x="40" y="70" width="250" height="270" rx="6" fill="#e9eee9" stroke="#344"/><rect x="660" y="70" width="280" height="270" rx="6" fill="#e9eee9" stroke="#344"/><g fill="#172c29" font-size="22"><text x="75" y="110">HC-SR501</text><text x="695" y="110">ESP32-CAM</text><text x="80" y="160">VCC</text><text x="80" y="220">GND</text><text x="80" y="280">OUT (3,3 V)</text><text x="680" y="160">5V</text><text x="680" y="220">GND</text><text x="680" y="280">GPIO13</text><text x="680" y="318" font-size="16">GPIO4 → LED integrado</text></g><g fill="none" stroke-width="5"><path d="M290 155H660" stroke="#c43c33"/><path d="M290 215H660" stroke="#202523"/><path d="M290 275H660" stroke="#b68b00"/></g><g font-size="17" fill="#172c29"><text x="370" y="145">Rojo / alimentación 5 V</text><text x="370" y="205">Negro / tierra común</text><text x="370" y="265">Amarillo / señal 3,3 V</text><text x="585" y="385">USB 5 V → base USB-C → placa</text></g><path d="M800 365V340" stroke="#344" stroke-width="4"/></svg><ol><li>Desenchufar USB, verificar serigrafía y alinear la placa/base.</li><li>Conectar VCC, GND y OUT según etiquetas; nunca enviar 5 V a GPIO.</li><li>Dejar SD vacía y GPIO0 libre durante funcionamiento.</li><li>Alimentar por una única fuente USB estable; comprobar primero cámara y luego PIR.</li></ol><p>LED integrado = actuador luminoso de señalización. Su aceptación académica está pendiente; no se agregó un LED externo sin resistencia. No se diagnostica automáticamente un LED físicamente averiado.</p><a href="GUIA.md">Guía completa de montaje, carga y diagnóstico</a></section><section id="s6"><div class="section-number">07 / PRESUPUESTO</div><h2>Costos trazables, sin valores inventados</h2><p>Moneda: ARS. Ingresar costo del conjunto/lote en cada fila, con fecha y comprobante o cotización. Importes de compra declarados por Luciano Aufieri: ARS 42.190. Quedan por verificar los elementos auxiliares; no se consideran gratuitos por omisión.</p><div class="scroll"><table><thead><tr><th>Componente</th><th>Cantidad</th><th>Estado</th><th>Costo ARS</th></tr></thead><tbody><tr><td>Kit ESP32-CAM OV3660 3 MP + base programadora USB-C</td><td>1</td><td>Comprado</td><td><input data-save="costo_0" type="number" placeholder="Pendiente" aria-label="Pendiente" min="0" step="0.01"></td></tr><tr><td>HC-SR501</td><td>1</td><td>Comprado</td><td><input data-save="costo_1" type="number" placeholder="Pendiente" aria-label="Pendiente" min="0" step="0.01"></td></tr><tr><td>Dupont hembra-hembra (lote)</td><td>1</td><td>Comprado</td><td><input data-save="costo_2" type="number" placeholder="Pendiente" aria-label="Pendiente" min="0" step="0.01"></td></tr><tr><td>Dupont macho-macho (lote)</td><td>1</td><td>Comprado; según montaje</td><td><input data-save="costo_3" type="number" placeholder="Pendiente" aria-label="Pendiente" min="0" step="0.01"></td></tr><tr><td>Cable USB de datos y fuente 5 V</td><td>1</td><td>Disponibilidad por verificar</td><td><input data-save="costo_4" type="number" placeholder="Pendiente" aria-label="Pendiente" min="0" step="0.01"></td></tr><tr><td>Soporte y bandeja mate</td><td>1</td><td>Reutilización por verificar</td><td><input data-save="costo_5" type="number" placeholder="Pendiente" aria-label="Pendiente" min="0" step="0.01"></td></tr><tr><td>Dado d6 blanco/negro</td><td>1</td><td>Disponibilidad por verificar</td><td><input data-save="costo_6" type="number" placeholder="Pendiente" aria-label="Pendiente" min="0" step="0.01"></td></tr></tbody></table></div><p id="budget" class="metric">Total pendiente</p><p>LED y cámara incluidos en la ESP32-CAM: sin costo incremental separado. PC y conexión existentes: costo incremental no determinado. No se incluyen costos cloud porque el reconocimiento es local.</p><textarea data-save="presupuesto_fuentes" placeholder="Fechas, comprobantes, costos aproximados cotizados y elementos reutilizados. No confundir costo total del proyecto con compras adicionales." aria-label="Fechas, comprobantes, costos aproximados cotizados y elementos reutilizados. No confundir costo total del proyecto con compras adicionales."></textarea></section><section id="s7"><div class="section-number">08 / HARDWARE Y SOFTWARE</div><h2>Responsabilidades claras</h2><div class="split"><div><h3>Dispositivo físico</h3><p><strong>ESP32-CAM:</strong> temporización, cámara y Wi-Fi. <strong>OV3660:</strong> sensor de imagen. <strong>HC-SR501:</strong> disparador por gesto. <strong>LED GPIO4:</strong> señal de activación. <strong>Base USB-C:</strong> base programadora según compra; chip USB y mapa de pines por verificar.</p><p>JPEG VGA con PSRAM, QVGA de respaldo. Un buffer evita retener múltiples imágenes grandes en memoria.</p></div><div><h3>Software local</h3><p><strong>Arduino ESP32 2.0.17:</strong> firmware C++ comentado. <strong>PlatformIO 6.9.0 (plataforma Espressif32):</strong> configuración reproducible. <strong>Node.js 22 + sharp 0.34.5:</strong> API y procesamiento.</p><p>Archivos JPEG y JSON por tirada; clave de acceso; validación de formato/tamaño; idempotencia por fotograma; confirmación humana.</p></div></div><details><summary>Cómo se reconoce y qué puede fallar</summary><p>Se segmenta una única región clara grande sobre fondo oscuro; se cuentan manchas oscuras de tamaño y forma compatibles con puntos. Se comparan las fotos 1 y 2: igual candidato y diferencia media menor a 3/255. Es una heurística experimental, sin modelo de probabilidad ni garantía de reconocer un dado real. Reflejos, caras laterales, otros objetos y desenfoque pueden producir errores.</p></details><p class="note">La API produce un contrato para FRAGUA; no está integrada a una partida real. El soporte universal de dados permanece pendiente.</p></section><section id="s8"><div class="section-number">09 / CÓDIGO COMENTADO</div><h2>Fuentes completas y reproducibles</h2><p>Se entregan archivos editables junto con este HTML. Las credenciales son ejemplos; no introducir secretos en el informe.</p><details><summary>firmware/src/main.cpp</summary><pre><code>// FRAGUA lab: AI Thinker ESP32-CAM / OV3660, Arduino ESP32 2.0.17.
+// No SD card: GPIO13 is PIR input, GPIO4 drives the onboard flash LED.
+#include &lt;Arduino.h&gt;
+#include &lt;WiFi.h&gt;
+#include &lt;HTTPClient.h&gt;
+#include &quot;esp_camera.h&quot;
+#if __has_include(&quot;secrets.h&quot;)
+#include &quot;secrets.h&quot;
+#else
+#include &quot;secrets.example.h&quot;
+#endif
+
+constexpr int PIR_PIN = 13, LED_PIN = 4;
+constexpr uint32_t WARMUP_MS = 60000, SETTLE_MS = 2500;
+constexpr uint32_t GAP_MS = 700, COOLDOWN_MS = 5000;
+enum class State { Warmup, Ready, Settling, Capturing, Rearm, Fault };
+State state = State::Warmup;
+uint32_t stateAt = 0, lastWifiAttempt = 0;
+bool seenLow = false;
+unsigned frameIndex = 0, sequence = 0;
+String bootId, rollId;
+
+void enter(State next) { state = next; stateAt = millis(); }
+
+bool initCamera() {
+  camera_config_t c = {};
+  c.ledc_channel = LEDC_CHANNEL_0; c.ledc_timer = LEDC_TIMER_0;
+  c.pin_d0 = 5; c.pin_d1 = 18; c.pin_d2 = 19; c.pin_d3 = 21;
+  c.pin_d4 = 36; c.pin_d5 = 39; c.pin_d6 = 34; c.pin_d7 = 35;
+  c.pin_xclk = 0; c.pin_pclk = 22; c.pin_vsync = 25; c.pin_href = 23;
+  c.pin_sccb_sda = 26; c.pin_sccb_scl = 27;
+  c.pin_pwdn = 32; c.pin_reset = -1; c.xclk_freq_hz = 20000000;
+  c.pixel_format = PIXFORMAT_JPEG;
+  c.frame_size = psramFound() ? FRAMESIZE_VGA : FRAMESIZE_QVGA;
+  c.jpeg_quality = 12; c.fb_count = 1;
+  c.fb_location = psramFound() ? CAMERA_FB_IN_PSRAM : CAMERA_FB_IN_DRAM;
+  c.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
+  esp_err_t result = esp_camera_init(&amp;c);
+  Serial.printf(&quot;camera_init=0x%x psram=%d\n&quot;, result, psramFound());
+  return result == ESP_OK;
+}
+
+void captureAndSend() {
+  // Flush queued exposure. The light is OFF during capture to limit reflections.
+  camera_fb_t *stale = esp_camera_fb_get();
+  if (stale) esp_camera_fb_return(stale);
+  camera_fb_t *fb = esp_camera_fb_get();
+  if (!fb) { Serial.println(&quot;capture_failed&quot;); return; }
+  Serial.printf(&quot;roll=%s frame=%u jpeg_bytes=%u\n&quot;, rollId.c_str(), frameIndex, unsigned(fb-&gt;len));
+  if (WiFi.status() == WL_CONNECTED) {
+    WiFiClient client;
+    HTTPClient http;
+    http.setConnectTimeout(3000); http.setTimeout(5000);
+    // HTTP is only for an isolated trusted LAN. Production requires TLS.
+    if (http.begin(client, API_URL)) {
+      http.addHeader(&quot;Content-Type&quot;, &quot;image/jpeg&quot;);
+      http.addHeader(&quot;Authorization&quot;, String(&quot;Bearer &quot;) + API_TOKEN);
+      http.addHeader(&quot;X-Device-Id&quot;, DEVICE_ID);
+      http.addHeader(&quot;X-Roll-Id&quot;, rollId);
+      http.addHeader(&quot;X-Frame-Index&quot;, String(frameIndex));
+      int status = http.POST(fb-&gt;buf, fb-&gt;len);
+      Serial.printf(&quot;http=%d\n&quot;, status);
+      if (status &gt; 0) Serial.println(http.getString());
+      http.end();
+    }
+  } else {
+    Serial.println(&quot;offline_capture_discarded: no SD/offline queue&quot;);
+  }
+  // Always release the frame, even on network failure.
+  esp_camera_fb_return(fb);
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_PIN, OUTPUT); digitalWrite(LED_PIN, LOW);
+  pinMode(PIR_PIN, INPUT_PULLDOWN);
+  bootId = String(esp_random(), HEX) + String(esp_random(), HEX);
+  if (!initCamera()) { enter(State::Fault); return; }
+  WiFi.mode(WIFI_STA); WiFi.setAutoReconnect(true);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  lastWifiAttempt = millis();
+  Serial.println(&quot;PIR warmup 60s; then LOW required. Serial 'c' = manual capture.&quot;);
+  enter(State::Warmup);
+}
+
+void loop() {
+  if (state == State::Fault) { delay(100); return; }
+  const uint32_t now = millis();
+  if (WiFi.status() != WL_CONNECTED &amp;&amp; now - lastWifiAttempt &gt;= 15000) {
+    WiFi.reconnect(); lastWifiAttempt = now;
+  }
+  const bool high = digitalRead(PIR_PIN) == HIGH;
+  const bool manual = Serial.available() &amp;&amp; Serial.read() == 'c';
+  switch (state) {
+    case State::Warmup:
+      if (now - stateAt &gt;= WARMUP_MS) { seenLow = false; enter(State::Ready); }
+      break;
+    case State::Ready:
+      if (!high) seenLow = true;
+      if (manual || (seenLow &amp;&amp; high)) {
+        rollId = bootId + &quot;-&quot; + String(++sequence); frameIndex = 0;
+        Serial.printf(&quot;trigger=%s roll=%s\n&quot;, manual ? &quot;manual&quot; : &quot;PIR&quot;, rollId.c_str());
+        digitalWrite(LED_PIN, HIGH); enter(State::Settling);
+      }
+      break;
+    case State::Settling:
+      // Visible 80ms pulse proves actuator command, not its physical operation.
+      if (now - stateAt &gt;= 80) digitalWrite(LED_PIN, LOW);
+      if (now - stateAt &gt;= SETTLE_MS) enter(State::Capturing);
+      break;
+    case State::Capturing:
+      if (frameIndex == 0 || now - stateAt &gt;= GAP_MS) {
+        captureAndSend(); ++frameIndex; stateAt = millis();
+        if (frameIndex == 3) enter(State::Rearm);
+      }
+      break;
+    case State::Rearm:
+      // Requires LOW after capture; prevents repeated rolls while PIR stays HIGH.
+      if (!high &amp;&amp; now - stateAt &gt;= COOLDOWN_MS) {
+        seenLow = false; enter(State::Ready); Serial.println(&quot;ready&quot;);
+      }
+      break;
+    default: break;
+  }
+  delay(5);
+}
+
+</code></pre></details><details><summary>firmware/platformio.ini</summary><pre><code>[env:esp32cam]
+platform = espressif32@6.9.0
+board = esp32cam
+framework = arduino
+monitor_speed = 115200
+upload_speed = 115200
+</code></pre></details><details><summary>firmware/include/secrets.example.h</summary><pre><code>#pragma once
+// Copy to secrets.h. Never publish real credentials.
+#define WIFI_SSID &quot;CAMBIAR_WIFI_2_4_GHZ&quot;
+#define WIFI_PASSWORD &quot;CAMBIAR_CLAVE&quot;
+#define API_URL &quot;http://192.168.1.100:8787/v1/captures&quot;
+#define API_TOKEN &quot;CAMBIAR_TOKEN_LARGO&quot;
+#define DEVICE_ID &quot;fragua-cam-01&quot;
+</code></pre></details><details><summary>backend/server.mjs</summary><pre><code>import http from 'node:http';
+import { mkdir, readFile, writeFile, rename } from 'node:fs/promises';
+import path from 'node:path';
+import { createHash, timingSafeEqual } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { recognize, compareFrames } from './recognizer.mjs';
+
+const safeId = /^[A-Za-z0-9_-]{1,80}$/;
+const MAX_BYTES = 1024 * 1024;
+const hash = b =&gt; createHash('sha256').update(b).digest('hex');
+async function jsonFile(file) { try { return JSON.parse(await readFile(file, 'utf8')); } catch (e) { if (e.code === 'ENOENT') return null; throw e; } }
+async function save(file, value) { await writeFile(file + '.tmp', JSON.stringify(value, null, 2)); await rename(file + '.tmp', file); }
+function send(res, status, value) { res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(value)); }
+async function body(req, max = MAX_BYTES) {
+  let size = 0; const chunks = [];
+  for await (const chunk of req) { size += chunk.length; if (size &gt; max) throw Object.assign(new Error('payload_too_large'), { status: 413 }); chunks.push(chunk); }
+  return Buffer.concat(chunks);
+}
+
+export function createApi({ token, dir }) {
+  if (!token || token.length &lt; 20) throw new Error('Set API_TOKEN with at least 20 characters');
+  let busy = false;
+  return http.createServer(async (req, res) =&gt; {
+    const url = new URL(req.url, 'http://localhost');
+    if (req.method === 'GET' &amp;&amp; url.pathname === '/health') return send(res, 200, { status: 'ok', recognition: 'experimental-d6-only' });
+    const supplied = hash(Buffer.from(req.headers.authorization || ''));
+    const expected = hash(Buffer.from(`Bearer ${token}`));
+    if (!timingSafeEqual(Buffer.from(supplied), Buffer.from(expected))) return send(res, 401, { error: 'unauthorized' });
+    // Single writer keeps frame/confirmation updates atomic. Lab server: no multi-process deployment.
+    if (busy) return send(res, 503, { error: 'busy_retry_later' });
+    busy = true;
+    try {
+      if (req.method === 'POST' &amp;&amp; url.pathname === '/v1/captures') {
+        if (req.headers['content-type']?.split(';')[0] !== 'image/jpeg') return send(res, 415, { error: 'expected_image_jpeg' });
+        const device = req.headers['x-device-id'], roll = req.headers['x-roll-id'];
+        const index = req.headers['x-frame-index'];
+        if (!safeId.test(device || '') || !safeId.test(roll || '') || !/^[0-2]$/.test(index || '')) return send(res, 400, { error: 'invalid_capture_headers' });
+        const jpeg = await body(req);
+        if (jpeg[0] !== 255 || jpeg[1] !== 216) return send(res, 422, { error: 'invalid_jpeg' });
+        const folder = path.join(dir, device, roll); await mkdir(folder, { recursive: true });
+        const file = path.join(folder, 'roll.json');
+        let record = await jsonFile(file) || { schema_version: 1, device_id: device, roll_id: roll, sides: 6, status: 'pending', value: null, frames: {}, created_at: new Date().toISOString() };
+        if (record.frames[index]) {
+          if (record.frames[index].sha256 !== hash(jpeg)) return send(res, 409, { error: 'frame_id_conflict' });
+          return send(res, 200, record);
+        }
+        if (record.status === 'confirmed') return send(res, 409, { error: 'roll_already_confirmed' });
+        let result;
+        try { result = await recognize(jpeg); } catch { return send(res, 422, { error: 'invalid_or_oversized_image' }); }
+        await writeFile(path.join(folder, `${index}.jpg`), jpeg);
+        record.frames[index] = { sha256: hash(jpeg), value: result.value, reason: result.reason, received_at: new Date().toISOString() };
+        if (Object.keys(record.frames).length === 3) {
+          const a = await recognize(await readFile(path.join(folder, '1.jpg')));
+          const b = await recognize(await readFile(path.join(folder, '2.jpg')));
+          record.mean_difference = compareFrames(a.pixels, b.pixels);
+          record.status = 'review_required';
+          record.candidate_value = a.value !== null &amp;&amp; a.value === b.value &amp;&amp; record.mean_difference &lt; 3 ? b.value : null;
+          record.reason = record.candidate_value === null ? 'unstable_or_ambiguous' : 'candidate_requires_human_confirmation';
+        }
+        await save(file, record); return send(res, 201, record);
+      }
+      const match = /^\/v1\/rolls\/([A-Za-z0-9_-]{1,80})\/([A-Za-z0-9_-]{1,80})(?:\/(confirm|[0-2]\.jpg|event))?$/.exec(url.pathname);
+      if (!match) return send(res, 404, { error: 'not_found' });
+      const [, device, roll, action] = match, folder = path.join(dir, device, roll), file = path.join(folder, 'roll.json');
+      const record = await jsonFile(file);
+      if (!record) return send(res, 404, { error: 'roll_not_found' });
+      if (req.method === 'GET' &amp;&amp; !action) return send(res, 200, record);
+      if (req.method === 'GET' &amp;&amp; action?.endsWith('.jpg')) {
+        if (!record.frames[action[0]]) return send(res, 404, { error: 'frame_not_found' });
+        const bytes = await readFile(path.join(folder, action));
+        res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'no-store' }); return res.end(bytes);
+      }
+      if (req.method === 'POST' &amp;&amp; action === 'confirm') {
+        let input; try { input = JSON.parse(await body(req, 2048)); } catch (e) { if (e.status) throw e; return send(res, 400, { error: 'invalid_json' }); }
+        if (!Number.isInteger(input?.value) || input.value &lt; 1 || input.value &gt; 6 || typeof input?.reviewer !== 'string' || !input.reviewer.trim() || input.reviewer.length &gt; 80)
+          return send(res, 400, { error: 'value_1_to_6_and_reviewer_required' });
+        if (record.status === 'pending') return send(res, 409, { error: 'incomplete_burst' });
+        if (record.status === 'confirmed') return record.value === input.value ? send(res, 200, record) : send(res, 409, { error: 'already_confirmed_different_value' });
+        record.status = 'confirmed'; record.value = input.value; record.reviewer = input.reviewer.trim(); record.confirmed_at = new Date().toISOString();
+        await save(file, record); return send(res, 200, record);
+      }
+      if (req.method === 'GET' &amp;&amp; action === 'event') {
+        if (record.status !== 'confirmed') return send(res, 409, { error: 'confirmation_required' });
+        return send(res, 200, { schema_version: 1, type: 'dice.roll.confirmed', event_id: `${device}:${roll}`, device_id: device, roll_id: roll, sides: 6, value: record.value, confirmed_at: record.confirmed_at, provenance: 'human_review_of_camera_capture' });
+      }
+      return send(res, 405, { error: 'method_not_allowed' });
+    } catch (error) {
+      if (!res.headersSent) send(res, error.status || 500, { error: error.status ? error.message : 'internal_error' });
+      console.error(error.message);
+    } finally { busy = false; }
+  });
+}
+
+if (process.argv[1] &amp;&amp; fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  const server = createApi({ token: process.env.API_TOKEN, dir: path.resolve(process.env.DATA_DIR || 'data') });
+  server.requestTimeout = 15000; server.headersTimeout = 10000;
+  server.listen(Number(process.env.PORT || 8787), process.env.HOST || '127.0.0.1', () =&gt; console.log('FRAGUA lab API ready; GET /health'));
+}
+</code></pre></details><details><summary>backend/recognizer.mjs</summary><pre><code>import sharp from 'sharp';
+
+// Connected components, 4-neighbour adjacency. Background pixels never enter a group.
+function components(mask, w, h) {
+  const seen = new Uint8Array(mask.length), groups = [];
+  for (let start = 0; start &lt; mask.length; start++) {
+    if (!mask[start] || seen[start]) continue;
+    const stack = [start]; seen[start] = 1;
+    let area = 0, x0 = w, y0 = h, x1 = 0, y1 = 0, sx = 0, sy = 0;
+    while (stack.length) {
+      const p = stack.pop(), x = p % w, y = Math.floor(p / w);
+      area++; sx += x; sy += y;
+      x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+      const neighbours = [];
+      if (x &gt; 0) neighbours.push(p - 1); if (x + 1 &lt; w) neighbours.push(p + 1);
+      if (y &gt; 0) neighbours.push(p - w); if (y + 1 &lt; h) neighbours.push(p + w);
+      for (const q of neighbours) if (mask[q] &amp;&amp; !seen[q]) { seen[q] = 1; stack.push(q); }
+    }
+    groups.push({ area, x0, y0, x1, y1, x: sx / area, y: sy / area });
+  }
+  return groups;
+}
+
+export async function recognize(jpeg) {
+  const decoder = sharp(jpeg, { limitInputPixels: 4000000, failOn: 'error' });
+  const meta = await decoder.metadata();
+  if (meta.format !== 'jpeg') throw new Error('Expected a decoded JPEG');
+  const { data, info } = await decoder.resize(320, 240, { fit: 'fill' }).greyscale().raw().toBuffer({ resolveWithObject: true });
+  const w = info.width, h = info.height;
+  const reject = reason =&gt; ({ value: null, reason, pixels: data });
+  // Controlled scene: one white die, dark matte tray, camera perpendicular to top face.
+  const white = Uint8Array.from(data, v =&gt; v &gt; 165 ? 1 : 0);
+  const faces = components(white, w, h).filter(g =&gt; g.area &gt; 900);
+  if (faces.length !== 1) return reject('expected_one_white_face');
+  const f = faces[0], fw = f.x1 - f.x0 + 1, fh = f.y1 - f.y0 + 1;
+  if (f.x0 &lt; 3 || f.y0 &lt; 3 || f.x1 &gt; w - 4 || f.y1 &gt; h - 4 || fw / fh &lt; .65 || fw / fh &gt; 1.5)
+    return reject('face_cropped_or_perspective');
+  const margin = Math.max(3, Math.round(Math.min(fw, fh) * .07));
+  const mask = new Uint8Array(data.length);
+  for (let y = f.y0 + margin; y &lt;= f.y1 - margin; y++)
+    for (let x = f.x0 + margin; x &lt;= f.x1 - margin; x++)
+      if (data[y * w + x] &lt; 85) mask[y * w + x] = 1;
+  const blobs = components(mask, w, h).filter(g =&gt; g.area &gt;= 8);
+  const pips = blobs.filter(g =&gt; {
+    const bw = g.x1 - g.x0 + 1, bh = g.y1 - g.y0 + 1;
+    const ratio = bw / bh, fraction = g.area / (fw * fh);
+    return ratio &gt; .55 &amp;&amp; ratio &lt; 1.8 &amp;&amp; fraction &gt; .003 &amp;&amp; fraction &lt; .065 &amp;&amp;
+      g.area / (bw * bh) &gt; .45 &amp;&amp; g.x0 &gt; f.x0 + margin &amp;&amp; g.x1 &lt; f.x1 - margin &amp;&amp;
+      g.y0 &gt; f.y0 + margin &amp;&amp; g.y1 &lt; f.y1 - margin;
+  });
+  if (pips.length !== blobs.length || pips.length &lt; 1 || pips.length &gt; 6) return reject('ambiguous_pips');
+  const areas = pips.map(p =&gt; p.area);
+  if (Math.max(...areas) / Math.min(...areas) &gt; 2) return reject('unequal_pips');
+  return { value: pips.length, reason: 'heuristic_d6_candidate', pixels: data };
+}
+
+export function compareFrames(a, b) {
+  if (!a || !b || a.length !== b.length) return Infinity;
+  let sum = 0;
+  for (let i = 0; i &lt; a.length; i++) sum += Math.abs(a[i] - b[i]);
+  return sum / a.length; // Mean absolute grayscale difference, 0..255, not probability.
+}
+</code></pre></details><details><summary>backend/test.mjs</summary><pre><code>import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import sharp from 'sharp';
+import { mkdtemp, rm } from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { recognize } from './recognizer.mjs';
+import { createApi } from './server.mjs';
+
+// Synthetic fixtures verify software only; they are NOT photographs of the prototype.
+const patterns = [[], [[160,120]], [[130,90],[190,150]], [[130,90],[160,120],[190,150]], [[130,90],[190,90],[130,150],[190,150]], [[130,90],[190,90],[160,120],[130,150],[190,150]], [[130,90],[190,90],[130,120],[190,120],[130,150],[190,150]]];
+async function fixture(n) {
+  const svg = `&lt;svg width=&quot;320&quot; height=&quot;240&quot;&gt;&lt;rect width=&quot;320&quot; height=&quot;240&quot; fill=&quot;#222&quot;/&gt;&lt;rect x=&quot;100&quot; y=&quot;60&quot; width=&quot;120&quot; height=&quot;120&quot; fill=&quot;white&quot;/&gt;${patterns[n].map(([x,y]) =&gt; `&lt;circle cx=&quot;${x}&quot; cy=&quot;${y}&quot; r=&quot;8&quot; fill=&quot;black&quot;/&gt;`).join('')}&lt;/svg&gt;`;
+  return sharp(Buffer.from(svg)).jpeg().toBuffer();
+}
+for (let n = 1; n &lt;= 6; n++) test(`synthetic d6 face ${n}`, async () =&gt; assert.equal((await recognize(await fixture(n))).value, n));
+test('blank face is rejected', async () =&gt; assert.equal((await recognize(await fixture(0))).value, null));
+test('API authentication, capture, replay, review and confirmed event', async () =&gt; {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'fragua-test-'));
+  const token = 'test-only-token-at-least-20-chars';
+  const server = createApi({ token, dir });
+  await new Promise(resolve =&gt; server.listen(0, '127.0.0.1', resolve));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const auth = { Authorization: `Bearer ${token}` };
+  const jpeg = await fixture(5), other = await fixture(3);
+  const post = (i, bytes = jpeg) =&gt; fetch(base + '/v1/captures', { method: 'POST', headers: { ...auth, 'Content-Type': 'image/jpeg', 'X-Device-Id': 'cam', 'X-Roll-Id': 'test1', 'X-Frame-Index': String(i) }, body: bytes });
+  try {
+    assert.equal((await fetch(base + '/v1/captures', {method:'POST'})).status, 401);
+    assert.equal((await post(4)).status, 400);
+    assert.equal((await post(0, Buffer.from('bad'))).status, 422);
+    assert.equal((await post(0)).status, 201);
+    assert.equal((await post(0)).status, 200);
+    assert.equal((await post(0, other)).status, 409);
+    assert.equal((await fetch(base + '/v1/rolls/cam/test1/event', {headers:auth})).status, 409);
+    await post(1); const record = await (await post(2)).json();
+    assert.equal(record.candidate_value, 5); assert.equal(record.value, null); assert.equal(record.status, 'review_required');
+    const confirm = value =&gt; fetch(base + '/v1/rolls/cam/test1/confirm', { method:'POST', headers:auth, body:JSON.stringify({value,reviewer:'test'}) });
+    assert.equal((await confirm(7)).status, 400);
+    assert.equal((await confirm(5)).status, 200); assert.equal((await confirm(5)).status, 200); assert.equal((await confirm(2)).status, 409);
+    const event = await (await fetch(base + '/v1/rolls/cam/test1/event', {headers:auth})).json();
+    assert.equal(event.value, 5); assert.equal(event.event_id, 'cam:test1');
+    const image = await fetch(base + '/v1/rolls/cam/test1/2.jpg', {headers:auth});
+    assert.equal(image.headers.get('content-type'), 'image/jpeg');
+    assert.deepEqual(Buffer.from(await image.arrayBuffer()), jpeg);
+  } finally { await new Promise(resolve =&gt; server.close(resolve)); await rm(dir, {recursive:true,force:true}); }
+});
+test('different last frames do not produce a candidate', async () =&gt; {
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'fragua-test-'));
+  const token = 'test-only-token-at-least-20-chars', server = createApi({token,dir});
+  await new Promise(resolve =&gt; server.listen(0, '127.0.0.1', resolve));
+  try {
+    for (let i=0; i&lt;3; i++) {
+      const response = await fetch(`http://127.0.0.1:${server.address().port}/v1/captures`, {method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'image/jpeg','X-Device-Id':'cam','X-Roll-Id':'moving','X-Frame-Index':String(i)},body:await fixture(i+1)});
+      const result = await response.json();
+      if (i===2) { assert.equal(result.candidate_value,null); assert.equal(result.status,'review_required'); }
+    }
+  } finally { await new Promise(resolve =&gt; server.close(resolve)); await rm(dir,{recursive:true,force:true}); }
+});
+</code></pre></details><p><a href="GUIA.md">Instrucciones de instalación y comandos</a> · <a href="VERIFICACION.md">Registro de verificación del software</a></p></section><section id="s9"><div class="section-number">10 / ENSAYOS Y PRUEBAS</div><h2>Lo verificado y lo que falta medir</h2><p class="status">SOFTWARE: 9 PRUEBAS AUTOMÁTICAS APROBADAS · IMÁGENES SINTÉTICAS</p><p>Se verificaron las seis caras sintéticas, rechazo de cara vacía, autenticación/idempotencia/confirmación y desacuerdo entre fotogramas. Estas pruebas no demuestran funcionamiento del montaje real.</p><p id="compile-status">Firmware: compilación aprobada con PlatformIO para ESP32-CAM / Arduino 2.0.17. RAM estática 50.464 bytes (15,4 %); programa 874.197 bytes (27,8 %). Sin carga ni prueba en placa física.</p><p>Plan físico siguiente: todos los resultados observados están pendientes hasta ejecutar y adjuntar evidencia.</p><details open><summary>P01 · Cámara manual · ensayo físico pendiente de registro</summary><p><strong>Acción:</strong> Capturar con comando c, sin usar el PIR.</p><p><strong>Esperado:</strong> Tres JPEG legibles y un roll con revisión requerida.</p><textarea data-save="prueba_0" placeholder="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía." aria-label="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía."></textarea></details><details><summary>P02 · Gesto + LED · ensayo físico pendiente de registro</summary><p><strong>Acción:</strong> Esperar 60 s, LOW y pasar la mano.</p><p><strong>Esperado:</strong> Un pulso visible y tres fotos; sin repetición durante HIGH.</p><textarea data-save="prueba_1" placeholder="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía." aria-label="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía."></textarea></details><details><summary>P03 · Lectura d6 · ensayo físico pendiente de registro</summary><p><strong>Acción:</strong> Cinco muestras por cara, 30 en total, referencia anotada.</p><p><strong>Esperado:</strong> Propuesta o rechazo; comparar con verdad real sin corregirla.</p><textarea data-save="prueba_2" placeholder="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía." aria-label="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía."></textarea></details><details><summary>P04 · Falso disparo · ensayo físico pendiente de registro</summary><p><strong>Acción:</strong> 10 gestos sin dado y período sin personas.</p><p><strong>Esperado:</strong> Registrar activaciones; fotos vacías sin valor confirmado.</p><textarea data-save="prueba_3" placeholder="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía." aria-label="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía."></textarea></details><details><summary>P05 · Tiradas consecutivas · ensayo físico pendiente de registro</summary><p><strong>Acción:</strong> 10 lanzamientos anotando el intervalo.</p><p><strong>Esperado:</strong> Documentar pérdidas durante espera/rearme y tiempo mínimo útil.</p><textarea data-save="prueba_4" placeholder="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía." aria-label="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía."></textarea></details><details><summary>P06 · Wi-Fi ausente · ensayo físico pendiente de registro</summary><p><strong>Acción:</strong> Apagar temporalmente la red de prueba.</p><p><strong>Esperado:</strong> Captura descartada con log; no resultado falso; reconexión.</p><textarea data-save="prueba_5" placeholder="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía." aria-label="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía."></textarea></details><details><summary>P07 · API detenida · ensayo físico pendiente de registro</summary><p><strong>Acción:</strong> Detener servidor con Wi-Fi disponible.</p><p><strong>Esperado:</strong> HTTP fallido, sin confirmación; siguiente tirada tras recuperar.</p><textarea data-save="prueba_6" placeholder="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía." aria-label="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía."></textarea></details><details><summary>P08 · Luz/movimiento · ensayo físico pendiente de registro</summary><p><strong>Acción:</strong> Variar iluminación y retirar mano más tarde.</p><p><strong>Esperado:</strong> Registrar errores/rechazos y ajustar condiciones.</p><textarea data-save="prueba_7" placeholder="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía." aria-label="Fecha / condición inicial / observado / ¿cumplió? / ajuste / ID de foto, video y log. Sin medición todavía."></textarea></details><h3>Montaje real / fotografías</h3><p>Adjuntar E01 placas y base; E02 conexiones sin energía; E03 montaje completo; E04 JPEG y referencia; E05 log/API. Video E06: documentar ubicación y descripción abajo. Las imágenes adjuntas se guardan al exportar el JSON o descargar el informe completo; conservar originales.</p><label class="button">Agregar fotografías reales <input id="photos" type="file" accept="image/jpeg,image/png" multiple></label><div id="gallery"></div><textarea data-save="video" placeholder="E06: nombre o ubicación del video, fecha, participantes y qué demuestra. Pendiente." aria-label="E06: nombre o ubicación del video, fecha, participantes y qué demuestra. Pendiente."></textarea></section><section id="s10"><div class="section-number">11 / ANÁLISIS DE RESULTADOS</div><h2>Medir antes de concluir</h2><p>No hay resultados físicos medidos. Las pruebas de software permiten verificar lógica y contrato; no permiten estimar precisión con dados reales.</p><div class="fields"><label>Tiradas reales N <input data-save="metric_n" type="number" placeholder="Sin medición" aria-label="Sin medición" min="0" step="0.01"></label><label>Con ≥1 foto útil C <input data-save="metric_c" type="number" placeholder="Sin medición" aria-label="Sin medición" min="0" step="0.01"></label><label>Con candidato A <input data-save="metric_a" type="number" placeholder="Sin medición" aria-label="Sin medición" min="0" step="0.01"></label><label>Candidatos correctos K <input data-save="metric_k" type="number" placeholder="Sin medición" aria-label="Sin medición" min="0" step="0.01"></label></div><p id="metrics" class="metric">Métricas físicas pendientes</p><p>Captura = C/N. Cobertura = A/N. Exactitud condicional = K/A. Éxito automático global = K/N. Correcciones humanas excluidas de K. Un denominador cero produce “no calculable”.</p><textarea data-save="latencia" placeholder="Latencias reales: guardar lista de milisegundos desde gesto a recepción. Informar n, mediana y máximo; ninguna medición todavía." aria-label="Latencias reales: guardar lista de milisegundos desde gesto a recepción. Informar n, mediana y máximo; ninguna medición todavía."></textarea><textarea data-save="analisis" placeholder="Analizar resultados frente a objetivos: fotos borrosas, falsos disparos, pérdidas, reflejos, ajustes y limitaciones del conjunto evaluado." aria-label="Analizar resultados frente a objetivos: fotos borrosas, falsos disparos, pérdidas, reflejos, ajustes y limitaciones del conjunto evaluado."></textarea></section><section id="s11"><div class="section-number">12 / CONCLUSIONES Y MEJORAS</div><h2>Un prototipo defendible necesita evidencia</h2><p>El diseño conecta sensores, procesamiento, comunicación y un actuador observable. El software permite recorrer el flujo completo hasta un evento confirmado, bajo un escenario visual acotado. Todavía no se puede concluir que el sistema físico funciona ni que alcanza una precisión determinada.</p><p>La principal limitación es usar la presencia de una mano como aproximación al inicio de una tirada. El retardo fijo y la comparación de dos imágenes reducen algunos errores, pero no demuestran reposo continuo. La revisión humana evita propagar automáticamente una lectura equivocada.</p><textarea data-save="conclusion_real" placeholder="Completar tras ensayos: qué funcionó realmente, qué no, aprendizaje de montaje y programación, y si se cumplieron los objetivos." aria-label="Completar tras ensayos: qué funcionó realmente, qué no, aprendizaje de montaje y programación, y si se cumplieron los objetivos."></textarea><h3>Próximas versiones</h3><ol><li>Calibrar foco, encuadre, luz y tiempos con evidencia física.</li><li>Detectar reposo en una secuencia continua y reducir tiradas perdidas.</li><li>Incorporar reconocimiento específico para otros dados y varios dados.</li><li>Añadir HTTPS, permisos de operador y cola offline.</li><li>Integrar FRAGUA con asociación a partida y deduplicación de eventos.</li></ol><h3>Defensa oral / entregables</h3><p>Entregar prototipo funcional, informe completo y demostración en vivo o video. Todos los integrantes deben participar. Registrar modalidad física en el archivo de grupos. Ponderación: proyecto 2 puntos, informe 3, funcionamiento 4, defensa 1.</p><details><summary>Fuentes y alcance de la consigna</summary><p>Consigna completa recuperada de “Mejora proyecto físico”. Las doce secciones obligatorias corresponden a la navegación; fotos y montaje real se documentan en ensayos. Los dos fallos simulados obligatorios aplican a la modalidad simulada, no a esta opción física.</p><ul><li><a href="https://github.com/espressif/arduino-esp32/blob/2.0.17/libraries/ESP32/examples/Camera/CameraWebServer/camera_pins.h">Espressif: pines de cámara</a></li><li><a href="https://github.com/espressif/esp32-camera">Espressif: cámara, JPEG y PSRAM</a></li><li><a href="https://www.addicore.com/products/pir-infrared-motion-sensor-hc-sr501">Addicore: HC-SR501</a></li><li><a href="https://docs.platformio.org/en/latest/boards/espressif32/esp32cam.html">PlatformIO: AI Thinker</a></li><li><a href="https://sharp.pixelplumbing.com/">sharp: procesamiento de imágenes</a></li></ul></details></section><footer>FRAGUA · Informe local, sin envío de fotos ni datos a servidores. Documentación preparada el 11/11/2026; fecha de ensayos a completar.</footer></main><script id="saved-data" type="application/json">{"version":1,"fields":{"integrantes":"Luciano Aufieri","fecha":"2026-11-11","costo_0":"29990","costo_1":"3900","costo_2":"3800","costo_3":"4500","presupuesto_fuentes":"Importes pagados informados por Luciano Aufieri el 11/11/2026, en ARS: kit ESP32-CAM con OV3660 3 MP y base programadora USB-C $29.990; HC-SR501 $3.900; lote 40 cables hembra-hembra de 20 cm $3.800; lote 40 cables macho-macho de 20 cm $4.500. Subtotal comprado $42.190. Comprobantes y fecha de compra no aportados. Cable/fuente, soporte/bandeja y dado: disponibilidad y costo adicional por verificar. No duplicar costo de base ni cámara, incluidas en el kit."},"photos":[]}</script><script>
+const fields=[...document.querySelectorAll('[data-save]')], sections=[...document.querySelectorAll('section')];let photos=[],current=0;const key='fragua-iot-report-v1';
+const feedback=t=>document.getElementById('feedback').textContent=t;
+function collect(){return {version:1,savedAt:Date.now(),fields:Object.fromEntries(fields.map(e=>[e.dataset.save,e.value])),photos}}
+function recalc(){let costs=fields.filter(e=>e.dataset.save.startsWith('costo_'));let filled=costs.filter(e=>e.value!=='');document.getElementById('budget').textContent=filled.length?'Subtotal cargado: ARS '+filled.reduce((a,e)=>a+Math.max(0,Number(e.value)||0),0).toLocaleString('es-AR')+' · '+filled.length+'/'+costs.length+' importes completos':'Total pendiente: no hay importes registrados';const vals=['n','c','a','k'].map(k=>document.querySelector('[data-save="metric_'+k+'"]').value);let msg='Métricas físicas pendientes';if(vals.every(v=>v!=='')){const [n,c,a,k]=vals.map(Number);if(vals.some(v=>!Number.isInteger(Number(v))||Number(v)<0)||c>n||a>n||k>a)msg='Revisar conteos: enteros ≥0, C≤N, A≤N y K≤A.';else{const rate=(x,y)=>y?(100*x/y).toFixed(1)+'%':'no calculable';msg='Captura '+rate(c,n)+' · Cobertura '+rate(a,n)+' · Exactitud '+rate(k,a)+' · Global '+rate(k,n)}}document.getElementById('metrics').textContent=msg}
+function save(){recalc();try{localStorage.setItem(key,JSON.stringify(collect()));feedback('Guardado en este navegador. Exportar JSON o HTML para entregar.')}catch{feedback('No se pudo guardar localmente. Exportá JSON o HTML para conservar los cambios.')}}
+function gallery(){const host=document.getElementById('gallery');host.replaceChildren();photos.forEach((p,i)=>{const div=document.createElement('div');div.className='gallery-item';const img=document.createElement('img');img.src=p.data;img.alt=p.caption||p.name;const label=document.createElement('p');label.textContent=p.name;const input=document.createElement('textarea');input.placeholder='ID / fecha / ensayo / qué demuestra esta foto real';input.value=p.caption||'';input.oninput=()=>{p.caption=input.value;save()};const del=document.createElement('button');del.textContent='Quitar foto';del.onclick=()=>{photos.splice(i,1);gallery();save()};div.append(img,label,input,del);host.append(div)})}
+function restore(d){if(!d||typeof d!=='object')throw Error('JSON inválido');if(d.fields&&typeof d.fields==='object')fields.forEach(e=>{if(typeof d.fields[e.dataset.save]==='string')e.value=d.fields[e.dataset.save]});photos=Array.isArray(d.photos)?d.photos.filter(p=>typeof p.data==='string'&&/^data:image\/(jpeg|png);base64,/.test(p.data)).map(p=>({name:String(p.name||'Foto'),caption:String(p.caption||''),data:p.data})):[];gallery();recalc()}
+try{const embedded=JSON.parse(document.getElementById('saved-data').textContent);let local={};try{local=JSON.parse(localStorage.getItem(key)||'{}')}catch{}restore((local.savedAt||0)>(embedded.savedAt||0)?local:embedded)}catch{feedback('Se abrió sin datos guardados. Podés importar tu copia JSON.')}
+fields.forEach(e=>e.addEventListener('input',save));
+function show(i){current=Math.max(0,Math.min(sections.length-1,i));sections.forEach((s,j)=>s.classList.toggle('current',j===current));document.querySelectorAll('[data-nav]').forEach((e,j)=>e.classList.toggle('active',j===current));if(document.body.classList.contains('present'))window.scrollTo(0,0)}
+document.querySelectorAll('[data-nav]').forEach(e=>e.onclick=()=>show(Number(e.dataset.nav)));
+document.getElementById('mode').onclick=()=>{document.body.classList.toggle('present');show(current);document.getElementById('mode').textContent=document.body.classList.contains('present')?'Ver informe completo':'Modo presentación'};
+document.getElementById('prev').onclick=()=>{show(current-1);if(!document.body.classList.contains('present'))sections[current].scrollIntoView()};document.getElementById('next').onclick=()=>{show(current+1);if(!document.body.classList.contains('present'))sections[current].scrollIntoView()};
+document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||!document.body.classList.contains('present'))return;if(e.key==='ArrowRight')show(current+1);if(e.key==='ArrowLeft')show(current-1)});
+document.getElementById('print').onclick=()=>{const opened=[...document.querySelectorAll('details')].map(e=>[e,e.open]);opened.forEach(([e])=>e.open=true);window.print();opened.forEach(([e,v])=>e.open=v)};
+function download(name,text,type){const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+document.getElementById('export').onclick=()=>download('fragua-evidencias.json',JSON.stringify(collect(),null,2),'application/json');
+document.getElementById('import').onchange=async e=>{try{const f=e.target.files[0];if(!f)return;if(f.size>25000000)throw Error('Archivo mayor a 25 MB');restore(JSON.parse(await f.text()));save()}catch(err){feedback(err.message)}};
+document.getElementById('download').onclick=()=>{const clone=document.documentElement.cloneNode(true);clone.querySelector('#saved-data').textContent=JSON.stringify(collect()).replaceAll('<','\u003c');clone.querySelector('#gallery').replaceChildren();download('FRAGUA-informe-completo.html','<!doctype html>'+clone.outerHTML,'text/html');feedback('HTML completo descargado con campos y fotografías incorporados.')};
+document.getElementById('photos').onchange=async e=>{for(const f of e.target.files){if(!['image/jpeg','image/png'].includes(f.type)||f.size>3000000){feedback('Usar JPEG/PNG de hasta 3 MB por foto.');continue}const data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(f)});photos.push({name:f.name,caption:'',data})}gallery();save()};
+show(0);recalc();
+</script></body></html>

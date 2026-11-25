@@ -18,11 +18,14 @@ small{color:#a9b7d0}@media(max-width:700px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body><main>
-<h1>Lector local de d20</h1>
+<h1>Lector local de dados</h1>
 <p>ESP32-CAM → Node.js → Ollama · <span id="model">...</span></p>
 <div class="grid">
 <section>
 <h2>Cámara</h2>
+<label><input id="liveEnabled" type="checkbox"> Ver cámara en vivo (sin grabar)</label>
+<img id="live" alt="Vista en vivo por capturas sucesivas" hidden>
+<p><small>La vista se pausa durante el análisis. Ver foto y Analizar dado detienen el automático para permitir una captura manual.</small></p>
 <img id="photo" alt="Última foto de la ESP32-CAM" />
 <div><button id="preview" class="secondary">Ver foto</button><button id="read">Analizar dado</button></div>
 <hr><label for="file">Probar sin cámara: foto JPEG o PNG, hasta 4 MiB</label>
@@ -37,6 +40,11 @@ small{color:#a9b7d0}@media(max-width:700px){.grid{grid-template-columns:1fr}}
 <p>Estado: <strong id="readState">Sin lectura</strong><br>
 Confianza cualitativa: <strong id="confidence">—</strong><br>
 Fecha: <span id="timestamp">—</span></p>
+<fieldset><legend>Revisar y confirmar</legend>
+<label>Tipo <select id="correctDie"><option>d4</option><option>d6</option><option>d8</option><option>d10</option><option>d12</option><option selected>d20</option></select></label>
+<label>Valor <input id="correctValue" type="number" min="1" max="20"></label>
+<button id="confirmReading">Confirmar / corregir resultado</button>
+<p>La corrección queda en memoria. No entrena el modelo ni guarda fotos en disco.</p></fieldset>
 <hr><h2>Detección automática experimental</h2>
 <p>Calibrá la mesa vacía antes de iniciar. Detecta movimiento y espera estabilidad; no identifica el objeto hasta consultar Ollama.</p>
 <div>
@@ -49,7 +57,7 @@ Fecha: <span id="timestamp">—</span></p>
 </main>
 <script>
 const $=id=>document.getElementById(id);
-let revision=0, readingRevision=0, busy=false, autoRunning=false;
+let revision=0, readingRevision=0, busy=false, autoRunning=false, liveUrl=null;
 const phaseLabels={detenido:"Detenido",calibrado:"Calibrado",esperando_dado:"Esperando dado",estabilizando:"Esperando estabilidad",analizando:"Analizando con Ollama",esperando_retiro:"Esperando retiro"};
 async function api(path,method="GET"){
   const response=await fetch(path,{method,cache:"no-store"});
@@ -62,19 +70,24 @@ async function api(path,method="GET"){
   return body;
 }
 function buttons(){
-  for(const id of ["preview","read","calibrate","upload"])$(id).disabled=busy||autoRunning;
+  for(const id of ["preview","read","confirmReading"])$(id).disabled=busy;
+  for(const id of ["calibrate","upload"])$(id).disabled=busy||autoRunning;
   $("start").disabled=busy||autoRunning;
   $("stop").disabled=!autoRunning;
 }
+// Muestra el candidato y permite corregir sus datos antes de confirmarlo.
 function showResult(data){
   if(!data)return;
   $("value").textContent=data.valor??"?";
   $("die").textContent=(data.dado||"desconocido").toUpperCase();
-  $("readState").textContent=data.estado==="reconocido"?"Candidato — revisar":"Indeterminado";
+  $("correctDie").value=data.dado=== "desconocido"?"d20":data.dado;
+  $("correctValue").value=data.valor??"";
+  $("readState").textContent=data.confirmed?"Confirmado por usuario":data.estado==="reconocido"?"Candidato — revisar":"Indeterminado";
   $("confidence").textContent=data.confianza||"—";
   $("observation").textContent=data.observacion||"Sin observaciones";
   $("timestamp").textContent=data.timestamp?new Date(data.timestamp).toLocaleString("es-AR"):"—";
 }
+// Actualiza foto, resultado y estado del detector sin recargar la página.
 async function refresh(){
   const s=await api("/api/state");
   $("model").textContent=s.model;
@@ -98,6 +111,7 @@ async function run(path,label){
   if(busy)return;
   busy=true;buttons();$("error").textContent="";$("message").textContent=label;
   try{
+    if(path==="/api/read")await manualReady();
     const result=await api(path,"POST");
     if(path==="/api/read")showResult(result);
     await refresh();
@@ -105,9 +119,37 @@ async function run(path,label){
   }catch(e){$("error").textContent=e.message;$("message").textContent="Error";}
   finally{busy=false;buttons();}
 }
+// Esperar que termine cualquier captura/inferencia en curso antes de tomar control manual.
+async function manualReady(){
+  await api('/api/auto/stop','POST');
+  for(let i=0;i<200;i++){
+    const s=await api('/api/state');
+    if(!s.reading&&!s.auto.tickInProgress)return;
+    await new Promise(r=>setTimeout(r,300));
+  }
+  throw Error('Todavía hay una lectura en curso; intentá nuevamente.');
+}
+$("confirmReading").onclick=async()=>{
+  if(busy)return;busy=true;buttons();
+  const expected=readingRevision;
+  try{
+    await manualReady();
+    const r=await fetch('/api/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({revision:expected,dado:$('correctDie').value,valor:Number($('correctValue').value)})});
+    const result=await r.json();if(!r.ok)throw Error(result.error);await refresh();$('error').textContent='';
+  }catch(e){$('error').textContent=e.message;}finally{busy=false;buttons();}
+};
+// Pide fotogramas sucesivos sin grabar video ni reemplazar la foto analizada.
+async function liveLoop(){
+  try{if($('liveEnabled').checked&&!busy){
+    const r=await fetch('/api/live-frame');if(!r.ok)throw Error('Cámara ocupada o no disponible');
+    const next=URL.createObjectURL(await r.blob());$('live').src=next;if(liveUrl)URL.revokeObjectURL(liveUrl);liveUrl=next;
+  }}catch(e){$('message').textContent=e.message;}finally{setTimeout(liveLoop,700);}
+}
+$('liveEnabled').onchange=()=>{$('live').hidden=!$('liveEnabled').checked;};
+liveLoop();
 $("preview").onclick=async()=>{
   if(busy)return;busy=true;buttons();$("error").textContent="";
-  try{await api("/api/capture");await refresh();$("message").textContent="Fotografía recibida";}
+  try{await manualReady();await api("/api/capture");await refresh();$("message").textContent="Fotografía recibida";}
   catch(e){$("error").textContent=e.message;}finally{busy=false;buttons();}
 };
 $("read").onclick=()=>run("/api/read","Analizando fotografía...");
@@ -126,3 +168,4 @@ refresh().catch(e=>$("error").textContent=e.message);
 setInterval(()=>refresh().catch(e=>$("error").textContent=e.message),1100);
 </script>
 </body></html>
+

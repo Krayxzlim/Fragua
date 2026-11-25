@@ -103,7 +103,34 @@ test('captura bloquea una segunda operación y limpia el resultado previo',async
     assert.equal((await (await fetch(base+'/api/state')).json()).latest,null);
   });
 });
-test('rechaza inferencia remota y respuestas de otros dados',()=>{
+test('rechaza inferencia remota y admite d6 dentro de rango',()=>{
   assert.throws(()=>createOllama({url:'https://example.com',model:'x'}),/local/);
-  assert.equal(normalizeDice({dado:'d6',valor:6,cara_superior_visible:true,confianza:'alta'}).valor,null);
+  assert.equal(normalizeDice({dado:'d6',valor:6,cara_superior_visible:true,confianza:'alta'}).valor,6);
+});
+
+test('confirma una revisión, rechaza corrección obsoleta y preserva foto frente a vista en vivo',async()=>{
+  const jpeg2=Buffer.from([255,216,1,255,217]);let frame=JPEG;
+  const {app}=createApp({capture:async()=>frame,analyze:async()=>({dado:'d20',valor:16,estado:'reconocido'})});
+  await withServer(app,async base=>{
+    const result=await (await fetch(base+'/api/read',{method:'POST'})).json();
+    assert.equal(result.imageData,'data:image/jpeg;base64,'+JPEG.toString('base64'));
+    frame=jpeg2;
+    await fetch(base+'/api/live-frame');
+    assert.deepEqual(Buffer.from(await (await fetch(base+'/api/last-image')).arrayBuffer()),JPEG);
+    const confirm=(body)=>fetch(base+'/api/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    assert.equal((await confirm({revision:result.revision,dado:'d6',valor:16})).status,400);
+    const corrected=await (await confirm({revision:result.revision,dado:'d6',valor:6})).json();
+    assert.equal(corrected.valor,6);assert.equal(corrected.confirmed,true);assert.equal(corrected.original.valor,16);
+    assert.equal((await confirm({revision:result.revision,dado:'d20',valor:6})).status,409);
+    await fetch(base+'/api/capture');
+    assert.equal((await confirm({revision:corrected.revision,dado:'d6',valor:6})).status,409);
+  });
+});
+test('solo permite el origen FRAGUA configurado, incluso en preflight',async()=>{
+  const {app}=createApp({capture:async()=>JPEG,analyze:async()=>({}),allowedOrigins:['http://localhost:5173']});
+  await withServer(app,async base=>{
+    const allowed=await fetch(base+'/api/read',{method:'OPTIONS',headers:{Origin:'http://localhost:5173','Access-Control-Request-Method':'POST'}});
+    assert.equal(allowed.status,204);assert.equal(allowed.headers.get('access-control-allow-origin'),'http://localhost:5173');
+    assert.equal((await fetch(base+'/api/read',{method:'OPTIONS',headers:{Origin:'https://evil.example'}})).status,403);
+  });
 });

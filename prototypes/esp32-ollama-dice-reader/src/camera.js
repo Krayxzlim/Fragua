@@ -1,10 +1,12 @@
 "use strict";
 const MAX_JPEG_BYTES = 4 * 1024 * 1024;
+// Comprueba que la respuesta tenga inicio y cierre de una imagen JPEG.
 function isJpeg(bytes) {
   return bytes.length >= 4 &&
     bytes[0] === 0xff && bytes[1] === 0xd8 &&
     bytes[bytes.length - 2] === 0xff && bytes[bytes.length - 1] === 0xd9;
 }
+// Configura la dirección de la cámara y el tiempo máximo de espera.
 function createCamera({ url, timeoutMs = 10000, fetchFn = fetch }) {
   if (!url) throw new Error("Configurar CAMERA_URL en .env");
   const cameraUrl = new URL(url);
@@ -14,6 +16,7 @@ function createCamera({ url, timeoutMs = 10000, fetchFn = fetch }) {
   return async function capture() {
     let response;
     try {
+      // Pide la foto sin usar una copia guardada en caché.
       response = await fetchFn(cameraUrl, {
         headers: { "Cache-Control": "no-cache" },
         signal: AbortSignal.timeout(timeoutMs)
@@ -30,6 +33,7 @@ function createCamera({ url, timeoutMs = 10000, fetchFn = fetch }) {
     if (type && !/image\/jpeg|image\/jpg|application\/octet-stream/i.test(type)) {
       throw new Error(`La cámara respondió ${type}, no JPEG`);
     }
+    // Lee la imagen por partes y corta si supera el tamaño permitido.
     const chunks = [];
     let length = 0;
     if (!response.body) throw new Error("La respuesta de la cámara no tiene imagen");
@@ -47,3 +51,4 @@ function createCamera({ url, timeoutMs = 10000, fetchFn = fetch }) {
   };
 }
 module.exports = { createCamera, isJpeg };
+
